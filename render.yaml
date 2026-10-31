@@ -1,0 +1,35 @@
+# One-click setup for Render (render.com): New > Blueprint > pick this repository.
+# A persistent disk keeps uploaded videos safe across restarts and redeploys.
+services:
+  - type: web
+    name: jackies-studio
+    runtime: node
+    plan: starter            # disks need a paid instance
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATA_DIR
+        value: /var/data
+      - key: FRONTEND_URL
+        sync: false          # your Vercel address, e.g. https://jackies-studio.vercel.app
+      - key: ADMIN_PATH
+        sync: false          # your own secret admin word, e.g. something-only-you-know-1234
+      - key: ADMIN_PASSWORD
+        sync: false          # Render asks you to type it in
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: UPI_ID
+        sync: false
+      - key: UPI_NAME
+        value: Jackie's Studio
+      - key: WHATSAPP
+        value: "916363692408"
+      - key: MAX_UPLOAD_MB
+        value: "4096"
+    disk:
+      name: videos
+      mountPath: /var/data
+      sizeGB: 20

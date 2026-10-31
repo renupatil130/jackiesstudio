@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Client delivery — Jackie’s Studio</title>
+<meta name="description" content="Got a video from Jackie’s Studio? Enter your delivery code to watch the preview and download it.">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/app/app.css">
+<style>
+  .box { max-width: 620px; display: grid; gap: 22px; margin-top: 6vh; }
+  .code { font-size: clamp(30px, 4.4vw, 44px); font-weight: 900; font-variation-settings: "wdth" 110; letter-spacing: .28em; text-transform: uppercase; text-align: center; padding: 18px 12px 18px calc(12px + .28em); }
+  .code::placeholder { color: rgba(239,231,218,.18); }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 9vh; }
+  .steps div { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 8px; }
+  .steps b { color: var(--molten); }
+  @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header class="top ui">
+  <a href="/">← Jackie’s Studio®</a>
+  <span class="mark">Client delivery <em>your video, ready</em></span>
+  <a class="end" href="https://wa.me/916363692408" target="_blank" rel="noopener">WhatsApp</a>
+</header>
+<main class="wrap">
+  <p class="kicker">Your video wants my touch-up. Here’s where you pick it up.</p>
+  <h1 class="title">Client delivery</h1>
+
+  <form class="box" id="f">
+    <label class="field"><span class="ui">Delivery code from Jackie’s message</span>
+      <input class="input code" id="code" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="K7Q2MX" required>
+    </label>
+    <button class="btn btn--solid ui" type="submit">Open my video</button>
+    <p class="msg" id="m"></p>
+  </form>
+
+  <div class="steps">
+    <div><span class="ui"><b>01</b> Watch</span><p class="serif">Watch your preview once, watermarked, to check the edit.</p></div>
+    <div><span class="ui"><b>02</b> Pay</span><p class="serif">Pay by UPI with the QR code and enter your payment reference.</p></div>
+    <div><span class="ui"><b>03</b> Download</span><p class="serif">Once Jackie confirms, download the full-quality video.</p></div>
+  </div>
+</main>
+<div class="grain" aria-hidden="true"></div>
+<script src="/app/config.js"></script>
+<script>
+(() => {
+  const f = document.getElementById('f'), c = document.getElementById('code'), m = document.getElementById('m');
+  c.addEventListener('input', () => { c.value = c.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    m.className = 'msg'; m.textContent = 'Looking…';
+    try {
+      const r = await fetch((window.API_BASE || '').replace(/\/+$/, '') + '/api/find', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: c.value }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || 'Something went wrong.');
+      location.href = j.link;
+    } catch (err) { m.className = 'msg err'; m.textContent = err.message; }
+  });
+})();
+</script>
+</body>
+</html>

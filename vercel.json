@@ -1,0 +1,25 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "echo \"no packages needed for the static site\"",
+  "buildCommand": "node scripts/build-frontend.js",
+  "outputDirectory": "public",
+  "rewrites": [
+    { "source": "/delivery", "destination": "/app/delivery.html" },
+    { "source": "/delivery.html", "destination": "/app/delivery.html" },
+    { "source": "/v/:id", "destination": "/app/watch.html" }
+  ],
+  "headers": [
+    {
+      "source": "/v/:id",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+        { "key": "Cache-Control", "value": "no-store" }
+      ]
+    },
+    {
+      "source": "/app/config.js",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+    }
+  ]
+}

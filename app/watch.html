@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Your video — Jackie’s Studio</title>
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/app/app.css">
+<style>
+  .head { display: grid; gap: 6px; margin-bottom: 6vh; }
+  .grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; align-items: start; }
+  .player { position: relative; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; background: #050505; border: 1px solid var(--line); }
+  .player.is-tall { aspect-ratio: 9 / 16; max-height: 78vh; margin: 0 auto; }
+  .player video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+  .cover { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 18px; padding: 24px; text-align: center;
+    background: radial-gradient(70% 70% at 50% 55%, rgba(255,178,63,.22), rgba(255,90,30,.08) 45%, rgba(0,0,0,0) 75%); }
+  .cover .serif { max-width: 30em; }
+  .play { width: 92px; height: 92px; border-radius: 50%; border: 1px solid var(--bone); background: rgba(0,0,0,.4); display: grid; place-items: center; cursor: pointer; transition: background .3s, transform .3s; }
+  .play:hover { background: var(--bone); transform: scale(1.05); } .play:hover svg { fill: #000; }
+  .play svg { width: 26px; height: 26px; fill: var(--bone); margin-left: 5px; }
+  .live { position: absolute; left: 14px; top: 14px; z-index: 2; color: var(--molten); background: rgba(0,0,0,.6); padding: .6em 1em; border-radius: 999px; pointer-events: none; }
+  .price { font-size: clamp(44px, 5vw, 76px); font-weight: 900; font-variation-settings: "wdth" 110; letter-spacing: -.04em; line-height: .9; }
+  .pay { display: grid; gap: 18px; }
+  .qr { width: min(100%, 240px); aspect-ratio: 1; border-radius: 8px; background: var(--bone); padding: 8px; }
+  .qr img { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+  .upi { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .upi code { font-family: var(--display); font-size: 16px; font-weight: 600; }
+  .form { display: grid; gap: 12px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .row .input { flex: 1 1 200px; }
+  .done { display: grid; gap: 16px; justify-items: start; }
+  hr { border: 0; border-top: 1px solid var(--line); }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header class="top ui">
+  <a href="/">Jackie’s Studio®</a>
+  <span class="mark">Private delivery <em>for your eyes only</em></span>
+  <a class="end" id="wa" href="https://wa.me/916363692408" target="_blank" rel="noopener">WhatsApp</a>
+</header>
+
+<main class="wrap">
+  <div id="loading" class="serif">Loading your video…</div>
+  <div id="bad" class="head" hidden>
+    <p class="kicker">Hmm.</p>
+    <h1 class="title">Link not found</h1>
+    <p class="serif">This delivery link is not valid or was removed. Message Jackie on WhatsApp for a new one.</p>
+  </div>
+
+  <div id="page" hidden>
+    <div class="head">
+      <p class="kicker">Your video wants my touch-up. Here it is, <span id="client"></span>.</p>
+      <h1 class="title" id="title"></h1>
+    </div>
+
+    <div class="grid">
+      <section>
+        <div class="player" id="player">
+          <video id="video" playsinline preload="none" controlslist="nodownload noplaybackrate noremoteplayback" disablepictureinpicture></video>
+          <span class="live ui" id="live" hidden>Preview playing · one view only</span>
+
+          <div class="cover" id="cvStart" hidden>
+            <button class="play" id="playBtn" aria-label="Watch the preview"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l16 9-16 9z"/></svg></button>
+            <p class="h2">Watch your preview</p>
+            <p class="serif">You can watch this preview <b>one time</b>. It's a lower-quality copy with a watermark. Don't reload or close the page while it plays.</p>
+          </div>
+          <div class="cover" id="cvWait" hidden>
+            <p class="h2">Preparing your preview</p>
+            <p class="serif">Your video was just uploaded and the preview is being made. This page updates by itself.</p>
+          </div>
+          <div class="cover" id="cvUsed" hidden>
+            <p class="h2">Preview watched</p>
+            <p class="serif">You've used your one preview. Pay to download the full-quality video without the watermark.</p>
+          </div>
+          <div class="cover" id="cvPaid" hidden>
+            <p class="h2">It's yours</p>
+            <p class="serif">Payment confirmed. Download the full-quality video below.</p>
+            <a class="btn btn--solid ui" id="dl2" href="#">Download video</a>
+          </div>
+          <div class="cover" id="cvFail" hidden>
+            <p class="h2">Preview unavailable</p>
+            <p class="serif">Something went wrong while making the preview. Jackie has been shown the problem; message on WhatsApp if it doesn't change soon.</p>
+          </div>
+        </div>
+        <p class="msg" id="playMsg"></p>
+      </section>
+
+      <aside class="panel pay" id="payBox">
+        <p class="ui" style="color:var(--ash)">Amount to pay</p>
+        <p class="price" id="price"></p>
+
+        <div id="payUnpaid" class="pay">
+          <div id="upiBox" class="pay" hidden>
+            <div class="qr"><img id="qr" alt="UPI QR code for this payment"></div>
+            <p class="serif">Scan with any UPI app (GPay, PhonePe, Paytm), or pay to:</p>
+            <div class="upi"><code id="upiId"></code><button class="btn btn--small ui" id="copyUpi">Copy</button><a class="btn btn--small ui" id="upiLink" href="#">Open UPI app</a></div>
+          </div>
+          <p class="serif" id="noUpi" hidden>Message Jackie on WhatsApp for payment details.</p>
+          <hr>
+          <form class="form" id="utrForm">
+            <label class="field"><span class="ui">After paying, enter the UPI reference / UTR number</span>
+              <div class="row"><input class="input" id="utr" inputmode="text" autocomplete="off" placeholder="e.g. 412345678901" maxlength="30">
+              <button class="btn btn--solid ui" type="submit">I've paid</button></div>
+            </label>
+            <p class="msg" id="utrMsg"></p>
+          </form>
+        </div>
+
+        <div id="payPending" class="done" hidden>
+          <span class="chip on ui">Payment received, checking</span>
+          <p class="serif">Thanks! Jackie will confirm your payment shortly and your download will unlock on this page by itself. You can also send a screenshot on WhatsApp to speed it up.</p>
+          <a class="btn ui" id="waPaid" target="_blank" rel="noopener" href="#">Send screenshot on WhatsApp</a>
+        </div>
+
+        <div id="payDone" class="done" hidden>
+          <span class="chip good ui">Paid</span>
+          <p class="serif">Full quality, no watermark.</p>
+          <a class="btn btn--solid ui" id="dl" href="#">Download video</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+<div class="grain" aria-hidden="true"></div>
+<script src="/app/config.js"></script>
+<script src="/app/watch.js"></script>
+</body>
+</html>

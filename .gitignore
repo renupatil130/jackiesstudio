@@ -1,0 +1,13 @@
+# Film frames are not included in this repository
+assets/fall/
+assets/portal/
+*.mp4
+*.wav
+showcase/track.json
+__pycache__/
+
+# Client video delivery
+node_modules/
+data/
+public/
+.env

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin — Jackie’s Studio</title>
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/app/app.css">
+<style>
+  .login { max-width: 460px; display: grid; gap: 20px; margin-top: 8vh; }
+  .bar { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 5vh; }
+  .up { display: grid; grid-template-columns: 1.2fr 1.4fr .7fr; gap: 16px; }
+  .up .file { grid-column: 1 / -1; }
+  .drop { display: grid; place-items: center; gap: 6px; min-height: 140px; border: 1px dashed rgba(239,231,218,.3); border-radius: 8px; text-align: center; padding: 20px; cursor: pointer; transition: border-color .3s, background .3s; }
+  .drop:hover, .drop.is-over { border-color: var(--molten); background: rgba(255,178,63,.05); }
+  .drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .prog { height: 2px; background: rgba(239,231,218,.15); border-radius: 2px; overflow: hidden; }
+  .prog i { display: block; height: 100%; width: 0; background: var(--molten); transition: width .2s; }
+  .acts { grid-column: 1 / -1; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .list { display: grid; gap: 14px; margin-top: 5vh; }
+  .job { display: grid; grid-template-columns: 1fr auto; gap: 14px 24px; align-items: start; }
+  .job h3 { font-size: clamp(20px, 2vw, 30px); line-height: 1; font-weight: 850; font-variation-settings: "wdth" 110; letter-spacing: -.03em; text-transform: uppercase; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .btns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; max-width: 420px; }
+  .link { grid-column: 1 / -1; display: flex; gap: 10px; align-items: center; }
+  .link .input { font-size: 14px; padding: 10px 12px; color: var(--ash); }
+  .empty { margin-top: 4vh; }
+  .warn { color: var(--molten); }
+  @media (max-width: 760px) { .up { grid-template-columns: 1fr; } .job { grid-template-columns: 1fr; } .btns { justify-content: flex-start; } }
+</style>
+</head>
+<body>
+<header class="top ui">
+  <a href="/">Jackie’s Studio®</a>
+  <span class="mark">Admin <em>client video delivery</em></span>
+  <button class="end ui btn btn--small" id="logout" hidden>Log out</button>
+</header>
+
+<main class="wrap">
+  <section id="loginView" class="login" hidden>
+    <p class="kicker">Only for Jackie.</p>
+    <h1 class="title">Admin</h1>
+    <form id="loginForm" class="form" style="display:grid;gap:14px">
+      <label class="field"><span class="ui">Password</span><input class="input" type="password" id="pw" autocomplete="current-password" required></label>
+      <button class="btn btn--solid ui" type="submit">Log in</button>
+      <p class="msg" id="loginMsg"></p>
+    </form>
+  </section>
+
+  <section id="appView" hidden>
+    <div class="bar">
+      <div>
+        <p class="kicker">Upload an edit, send the link, get paid.</p>
+        <h1 class="title">Deliveries</h1>
+      </div>
+      <p class="serif warn" id="upiWarn" hidden>UPI_ID is not set on the server, so clients won't see a QR code.</p>
+    </div>
+
+    <form id="upForm" class="panel up">
+      <label class="field"><span class="ui">Client name</span><input class="input" name="client" required maxlength="80" placeholder="e.g. Priya"></label>
+      <label class="field"><span class="ui">Project title</span><input class="input" name="title" maxlength="120" placeholder="e.g. Wedding highlight reel"></label>
+      <label class="field"><span class="ui">Price (₹)</span><input class="input" name="price" type="number" min="1" step="1" required placeholder="2500"></label>
+      <label class="drop file" id="drop">
+        <input type="file" name="video" id="file" accept="video/*" required>
+        <span class="h2" style="font-size:22px" id="fileName">Drop the edited video here</span>
+        <span class="serif">or click to choose · the client gets a watermarked one-time preview, the full file unlocks after payment</span>
+      </label>
+      <div class="acts">
+        <button class="btn btn--solid ui" type="submit" id="upBtn">Upload &amp; create link</button>
+        <div class="prog" style="flex:1 1 160px" hidden id="prog"><i></i></div>
+        <p class="msg" id="upMsg"></p>
+      </div>
+    </form>
+
+    <div class="list" id="list"></div>
+    <p class="serif empty" id="empty" hidden>No deliveries yet. Upload your first edit above.</p>
+  </section>
+</main>
+<div class="grain" aria-hidden="true"></div>
+<script src="/app/admin.js"></script>
+</body>
+</html>
