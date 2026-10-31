@@ -11,3 +11,8 @@ node_modules/
 data/
 public/
 .env
+
+# Cloudflare Worker
+worker/.dev.vars
+worker/.wrangler/
+worker/src/admin-page.generated.js

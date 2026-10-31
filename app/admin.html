@@ -29,8 +29,11 @@
   .link { grid-column: 1 / -1; display: flex; gap: 10px; align-items: center; }
   .link .input { font-size: 14px; padding: 10px 12px; color: var(--ash); }
   .empty { margin-top: 4vh; }
+  .drive { grid-column: 1 / -1; display: grid; gap: 14px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .drive code { color: var(--bone); font-family: var(--display); font-weight: 600; overflow-wrap: anywhere; }
   .warn { color: var(--molten); }
-  @media (max-width: 760px) { .up { grid-template-columns: 1fr; } .job { grid-template-columns: 1fr; } .btns { justify-content: flex-start; } }
+  @media (max-width: 760px) { .up, .two { grid-template-columns: 1fr; } .job { grid-template-columns: 1fr; } .btns { justify-content: flex-start; } }
 </style>
 </head>
 <body>
@@ -69,6 +72,15 @@
         <span class="h2" style="font-size:22px" id="fileName">Drop the edited video here</span>
         <span class="serif">or click to choose · the client gets a watermarked one-time preview, the full file unlocks after payment</span>
       </label>
+      <div class="drive" id="driveFields" hidden>
+        <p class="serif" id="driveHelp">Export the watermarked preview and the final video from your editor, upload both to your Drive folder, then pick them here.</p>
+        <div class="two">
+          <label class="field"><span class="ui">Preview (watermarked, the client watches it once)</span><input class="input" name="preview" list="driveList" autocomplete="off" placeholder="Pick from Drive or paste a Drive link"></label>
+          <label class="field"><span class="ui">Final video (unlocks after payment)</span><input class="input" name="final" list="driveList" autocomplete="off" placeholder="Pick from Drive or paste a Drive link"></label>
+        </div>
+        <datalist id="driveList"></datalist>
+        <p class="msg" id="driveMsg"></p>
+      </div>
       <div class="acts">
         <button class="btn btn--solid ui" type="submit" id="upBtn">Upload &amp; create link</button>
         <div class="prog" style="flex:1 1 160px" hidden id="prog"><i></i></div>

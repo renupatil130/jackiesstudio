@@ -16,8 +16,28 @@
   const post = (path, body) => call(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
 
   let timer = null;
+  let mode = 'upload';
   function showLogin() { $('#loginView').hidden = false; $('#appView').hidden = true; $('#logout').hidden = true; clearTimeout(timer); setTimeout(() => $('#pw').focus(), 50); }
-  function showApp(me) { $('#loginView').hidden = true; $('#appView').hidden = false; $('#logout').hidden = false; $('#upiWarn').hidden = !!me.upiConfigured; load(); }
+  function showApp(me) {
+    $('#loginView').hidden = true; $('#appView').hidden = false; $('#logout').hidden = false; $('#upiWarn').hidden = !!me.upiConfigured;
+    mode = me.mode || 'upload';
+    if (mode === 'drive') {
+      $('#drop').hidden = true; $('#file').required = false;
+      $('#driveFields').hidden = false;
+      $('#upBtn').textContent = 'Create link';
+      if (me.serviceEmail) $('#driveHelp').innerHTML = `Upload the watermarked preview and the final video to your Drive folder, then pick them here. The folder must be shared with <code>${esc(me.serviceEmail)}</code> (Viewer).`;
+      if (me.folder) loadDrive();
+    }
+    load();
+  }
+  async function loadDrive() {
+    const m = $('#driveMsg');
+    try {
+      const files = await call('/api/admin/drive-files');
+      $('#driveList').innerHTML = files.map((f) => `<option value="${esc(f.name)}">${esc(mb(f.size))}</option>`).join('');
+      m.className = 'msg'; m.textContent = files.length ? `${files.length} videos in your Drive folder.` : 'No videos in your Drive folder yet. Upload them in Google Drive, then reload this page.';
+    } catch (err) { m.className = 'msg err'; m.textContent = err.message; }
+  }
 
   $('#loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -106,9 +126,20 @@
   ['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, () => drop.classList.remove('is-over')));
   drop.addEventListener('drop', (e) => { e.preventDefault(); if (e.dataTransfer.files[0]) { file.files = e.dataTransfer.files; file.dispatchEvent(new Event('change')); } });
 
-  $('#upForm').addEventListener('submit', (e) => {
+  $('#upForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.currentTarget, m = $('#upMsg'), prog = $('#prog'), bar = $('#prog i'), btn = $('#upBtn');
+    if (mode === 'drive') {
+      const f = Object.fromEntries(new FormData(form));
+      btn.disabled = true; m.className = 'msg'; m.textContent = 'Checking the Drive files…';
+      try {
+        await post('/api/admin/jobs', { client: f.client, title: f.title, price: f.price, preview: f.preview, final: f.final });
+        m.className = 'msg ok'; m.textContent = 'Done. Copy the link or press Send on WhatsApp below.';
+        form.reset(); load();
+      } catch (err) { m.className = 'msg err'; m.textContent = err.message; }
+      btn.disabled = false;
+      return;
+    }
     if (!file.files[0]) { m.className = 'msg err'; m.textContent = 'Choose a video file first.'; return; }
     const fd = new FormData(form);
     fd.delete('video'); fd.append('video', file.files[0]); // file last, so the text fields arrive first

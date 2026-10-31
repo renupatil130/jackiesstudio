@@ -288,7 +288,7 @@ const qrCache = new Map();
 async function upiFor(j) {
   if (!UPI_ID) return null;
   const note = `Jackie's Studio - ${j.title}`.slice(0, 50);
-  const link = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(UPI_NAME)}&am=${j.price}&cu=INR&tn=${encodeURIComponent(note)}`;
+  const link = `upi://pay?pa=${encodeURIComponent(UPI_ID).replace(/%40/g, "@")}&pn=${encodeURIComponent(UPI_NAME)}&am=${j.price}&cu=INR&tn=${encodeURIComponent(note)}`;
   if (!qrCache.has(link)) {
     qrCache.set(link, await QRCode.toDataURL(link, { margin: 1, width: 360, color: { dark: '#000000', light: '#efe7da' } }));
   }

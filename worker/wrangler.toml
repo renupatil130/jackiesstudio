@@ -1,0 +1,19 @@
+# Optional: deploy with the Wrangler command line instead of pasting into the dashboard.
+#   cd worker && npx wrangler kv namespace create DB   (copy the id it prints into kv_namespaces below)
+#   npx wrangler secret put ADMIN_PASSWORD   (and SESSION_SECRET, GOOGLE_SERVICE_ACCOUNT)
+#   npx wrangler deploy
+name = "jackiesstudio-api"
+main = "dist/worker.js"
+compatibility_date = "2025-06-01"
+workers_dev = true
+
+kv_namespaces = [
+  { binding = "DB", id = "PASTE_YOUR_KV_NAMESPACE_ID_HERE" }
+]
+
+[vars]
+FRONTEND_URL = "https://jackiesstudio.vercel.app"
+UPI_NAME = "Jackie's Studio"
+WHATSAPP = "916363692408"
+# ADMIN_PATH, UPI_ID and DRIVE_FOLDER_ID: set them in the Cloudflare dashboard (Settings > Variables)
+# so your secret admin word never sits in this public repository.

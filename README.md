@@ -40,6 +40,8 @@ If your clips have a different number of frames, change `FALL_N` and `PORTAL_N` 
 
 ## Client video delivery (admin upload, one-time preview, pay to download)
 
+> **No card? Use the free setup:** videos in Google Drive, backend on a free Cloudflare Worker, site on Vercel. Step-by-step guide: [FREE-SETUP.md](FREE-SETUP.md). The rest of this section describes the Render version (paid, with automatic watermarking).
+
 The site comes with a small Node.js server that adds the delivery pages. The portfolio's look is unchanged; the landing screen and the menu get a **Client delivery** link.
 
 - **Your secret admin page** (the address you set in `ADMIN_PATH`, e.g. `/jackie-desk-8341`): there is no link to it anywhere on the site, `/admin` doesn't exist, and it still asks for your password. Upload an edited video and enter the client's name, project title and price. You get a private link and a 6-character code (like `K7Q2MX`), plus a **Send on WhatsApp** button with the message ready.
